@@ -1,5 +1,5 @@
 import { PoolClient } from "https://deno.land/x/postgres@v0.4.5/client.ts";
-import { pool } from "../../database/pgPool.ts";
+import { pool } from "../../loaders/pgPool.ts";
 import { User } from "../../interfaces/User.ts";
 
 export default class UsersService {
