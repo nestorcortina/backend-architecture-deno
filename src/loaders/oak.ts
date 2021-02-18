@@ -1,9 +1,10 @@
 import { bold, cyan, green } from "https://deno.land/std@0.73.0/fmt/colors.ts";
 import { Application, isHttpError } from "https://deno.land/x/oak/mod.ts";
-import { notFound } from "../helpers/notFound.ts";
-import router from "../routes/v1/index.ts";
+import router from "../api/routes/v1/index.ts";
+import { InternalError, NotFoundError } from "../helpers/api.response.ts";
 
-export default async ({ app }: { app: Application }): Promise<Application> => {
+export default (): Application => {
+  const app = new Application();
   // Logger
   app.use(async (context, next) => {
     await next();
@@ -44,7 +45,8 @@ export default async ({ app }: { app: Application }): Promise<Application> => {
         }
       } else {
         console.log(err);
-        throw err;
+        InternalError(context.response)
+        return
       }
     }
   });
@@ -54,7 +56,9 @@ export default async ({ app }: { app: Application }): Promise<Application> => {
   app.use(router.allowedMethods());
 
   // A basic 404 page
-  app.use(notFound);
+  app.use((context) => {
+    NotFoundError(context.response)
+  })
 
   return app;
 };
